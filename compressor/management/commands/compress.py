@@ -57,7 +57,8 @@ class Command(NoArgsCommand):
                          "itself.", dest='follow_links'),
 
         make_option('--ignore', '-i', action='append', dest='ignore',
-                    help="Ignore folders specified in this comma separated list"),
+                    help="Ignore folders specified in this comma separated list. Separate multiple ignored folders "
+                         "with commas, or use -i multiple times"),
 
         make_option('--engine', default="django", action="store",
                     help="Specifies the templating engine. jinja2 or django", dest="engine"),
@@ -130,7 +131,7 @@ class Command(NoArgsCommand):
         compress nodes (not the content of the possibly linked files!).
         """
         extensions = options.get('extensions')
-        ignore = options.get('ignore')
+        ignore_list = options.get('ignore')
         extensions = self.handle_extensions(extensions or ['html'])
         verbosity = int(options.get("verbosity", 0))
         if not log:
@@ -156,13 +157,13 @@ class Command(NoArgsCommand):
                 "No template paths found. None of the configured template loaders provided template paths. See "
                 "https://docs.djangoproject.com/en/1.8/topics/templates/ for more information on template loaders.")
 
-        if ignore:
-            ignore_list = ignore.split(',')
-            for path in ignore_list:
-                if path in paths:
-                    if verbosity > 1:
-                        log.write("Ignoring path: {}".format(path))
-                    paths.remove(path)
+        if ignore_list:
+            if isinstance(ignore_list, list):
+                for path in ignore_list:
+                    if path in paths:
+                        if verbosity > 1:
+                            log.write("Ignoring path: {}".format(path))
+                        paths.remove(path)
 
         if verbosity > 1:
             log.write("Considering paths:\n\t" + "\n\t".join(paths) + "\n")
