@@ -162,7 +162,7 @@ class Command(NoArgsCommand):
                 for path in ignore_list:
                     if path in paths:
                         if verbosity > 1:
-                            log.write("Ignoring path: {}".format(path))
+                            log.write("Ignoring path: {}\n".format(path))
                         paths.remove(path)
 
         if verbosity > 1:
@@ -223,8 +223,7 @@ class Command(NoArgsCommand):
 
         if verbosity > 0:
             log.write("Found 'compress' tags in:\n\t" +
-                      "\n\t".join((t.template_name
-                                   for t in compressor_nodes.keys())) + "\n")
+                      "\n\t".join((t.template_name for t in compressor_nodes.keys())) + "\n")
 
         contexts = settings.COMPRESS_OFFLINE_CONTEXT
         if isinstance(contexts, six.string_types):
