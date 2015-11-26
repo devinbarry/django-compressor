@@ -44,20 +44,20 @@ class Command(NoArgsCommand):
     help = "Compress content outside of the request/response cycle"
     option_list = NoArgsCommand.option_list + (
         make_option('--extension', '-e', action='append', dest='extensions',
-            help='The file extension(s) to examine (default: ".html", '
-                'separate multiple extensions with commas, or use -e '
-                'multiple times)'),
+                    help='The file extension(s) to examine (default: ".html", separate multiple extensions with '
+                         'commas, or use -e multiple times)'),
+
         make_option('-f', '--force', default=False, action='store_true',
-            help="Force the generation of compressed content even if the "
-                "COMPRESS_ENABLED setting is not True.", dest='force'),
+                    help="Force the generation of compressed content even if the COMPRESS_ENABLED setting is not True.",
+                    dest='force'),
+
         make_option('--follow-links', default=False, action='store_true',
-            help="Follow symlinks when traversing the COMPRESS_ROOT "
-                "(which defaults to STATIC_ROOT). Be aware that using this "
-                "can lead to infinite recursion if a link points to a parent "
-                "directory of itself.", dest='follow_links'),
+                    help="Follow symlinks when traversing the COMPRESS_ROOT (which defaults to STATIC_ROOT). Be aware "
+                         "that using this can lead to infinite recursion if a link points to a parent directory of "
+                         "itself.", dest='follow_links'),
+
         make_option('--engine', default="django", action="store",
-            help="Specifies the templating engine. jinja2 or django",
-            dest="engine"),
+                    help="Specifies the templating engine. jinja2 or django", dest="engine"),
     )
 
     def get_loaders(self):
@@ -132,9 +132,8 @@ class Command(NoArgsCommand):
         if not log:
             log = StringIO()
         if not settings.TEMPLATE_LOADERS:
-            raise OfflineGenerationError("No template loaders defined. You "
-                                         "must set TEMPLATE_LOADERS in your "
-                                         "settings.")
+            raise OfflineGenerationError("No template loaders defined. You must set TEMPLATE_LOADERS in your settings.")
+
         paths = set()
         for loader in self.get_loaders():
             try:
@@ -147,6 +146,7 @@ class Command(NoArgsCommand):
             except (ImportError, AttributeError, TypeError):
                 # Yeah, this didn't work out so well, let's move on
                 pass
+
         if not paths:
             raise OfflineGenerationError("No template paths found. None of "
                                          "the configured template loaders "
