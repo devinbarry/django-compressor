@@ -13,3 +13,6 @@ docs/_build/
 .sass-cache
 .coverage
 .tox
+
+# Ignore PyCharm files
+.idea/
