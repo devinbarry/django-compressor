@@ -56,6 +56,9 @@ class Command(NoArgsCommand):
                          "that using this can lead to infinite recursion if a link points to a parent directory of "
                          "itself.", dest='follow_links'),
 
+        make_option('--ignore', '-i', action='append', dest='ignore',
+                    help="Ignore folders specified in this comma separated list"),
+
         make_option('--engine', default="django", action="store",
                     help="Specifies the templating engine. jinja2 or django", dest="engine"),
     )
@@ -127,6 +130,7 @@ class Command(NoArgsCommand):
         compress nodes (not the content of the possibly linked files!).
         """
         extensions = options.get('extensions')
+        ignore = options.get('ignore')
         extensions = self.handle_extensions(extensions or ['html'])
         verbosity = int(options.get("verbosity", 0))
         if not log:
@@ -148,12 +152,18 @@ class Command(NoArgsCommand):
                 pass
 
         if not paths:
-            raise OfflineGenerationError("No template paths found. None of "
-                                         "the configured template loaders "
-                                         "provided template paths. See "
-                                         "https://docs.djangoproject.com/en/1.8/topics/templates/ "
-                                         "for more information on template "
-                                         "loaders.")
+            raise OfflineGenerationError(
+                "No template paths found. None of the configured template loaders provided template paths. See "
+                "https://docs.djangoproject.com/en/1.8/topics/templates/ for more information on template loaders.")
+
+        if ignore:
+            ignore_list = ignore.split(',')
+            for path in ignore_list:
+                if path in paths:
+                    if verbosity > 1:
+                        log.write("Ignoring path: {}".format(path))
+                    paths.remove(path)
+
         if verbosity > 1:
             log.write("Considering paths:\n\t" + "\n\t".join(paths) + "\n")
         templates = set()
